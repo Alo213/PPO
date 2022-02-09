@@ -21,6 +21,22 @@ class PPO:
     def _init_hyperparameters(self):
         self.timesteps_per_batch = 4800
         self.max_timesteps_per_episode = 1600
+        self.gamma = 0.95
+
+    def compute_rtgs(self, batch_rews):
+        batch_rtgs = []
+
+        for ep_rews in reversed(batch_rews):
+
+            discounted_reward = 0
+
+            for rew in reversed(ep_rews):
+                discounted_reward = rew + gamma*discounted_reward
+                batch_rtgs.insert(0, discounted_reward)
+
+        batch_rtgs = torch.tensor(batch_rtgs, dtype=float)
+
+        return batch_rtgs
 
     def rollout(self):
         #ALGO 3, collect data from set of trajectories...
@@ -100,4 +116,10 @@ class PPO:
     def learn(self, total_timesteps):
         timesteps_so_far = 0
         while timesteps_so_far < total_timesteps:       #ALGO paso 2
+
+        batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens = self.rollout()
+
+        
+
+
             
