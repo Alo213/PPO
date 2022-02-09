@@ -86,7 +86,9 @@ class PPO:
 
         return batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens
 
-
+    def evaluate(self, batch_obs):
+        V = self.critic.forward(batch_obs).squeeze()
+        return V
 
     def get_action(self, obs):
         #Calcula accion tomada por el actor, se llama mean porque es la media de nuestra distribucion (para efectos de exploracion)
@@ -115,11 +117,22 @@ class PPO:
 
     def learn(self, total_timesteps):
         timesteps_so_far = 0
-        while timesteps_so_far < total_timesteps:       #ALGO paso 2
+        while timesteps_so_far < total_timesteps:                                               #ALGO paso 2
 
-        batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens = self.rollout()
+        batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens = self.rollout()         #ALGO step 3
+
+        V = self.evaluate(batch_obs)                                                            #ALGO step 5
+
+        #Calculate A = Q - V_{phi_k}
+        A_k = self.batch_rtgs - V.detach()                                                      #ALGO step 5
+
+        #Normalize Advantages
+        A_k = (A_k - A_k.mean())/(A_k.std() + 1e-10)                                            #Training trick
 
         
+
+
+
 
 
             
