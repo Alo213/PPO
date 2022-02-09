@@ -28,7 +28,7 @@ class PPO:
         batch_acts = []
         batch_log_probs = []
         batch_rews = []
-        batch_rews_to_go = []
+        batch_rtgs = []
         batch_lens = []
 
         obs = self.env.reset()
@@ -60,6 +60,16 @@ class PPO:
             #Collect ep_length and episode rewards
             batch_lens.append(ep_t + 1)
             batch_rews.append(ep_rews)
+        
+        #Turn batches to tensors before return to draw computation graphs later
+        batch_obs = torch.tensor(batch_obs, dtype=torch.float)
+        batch_acts = torch.tensor(batch_acts, dtype=torch.float)
+        batch_log_probs = torch.tensor(batch_log_probs, dtype=torch.float)
+
+        batch_rtgs = self.compute_rtgs(batch_rews)                              #ALGO step 4
+
+        return batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens
+
 
 
     def get_action(self, obs):
@@ -80,7 +90,7 @@ class PPO:
         # start later down the line.
 
         return action.detach().numpy(), log_prob.detach()
-
+        #asdfjhas
 
 
         
