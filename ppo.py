@@ -1,6 +1,7 @@
 from networks import FeedForwardNN
 
 import torch
+import torch.nn as nn
 from torch.distributions import MultivariateNormal
 from torch.optim import Adam
 
@@ -17,6 +18,7 @@ class PPO:
         self.critic = FeedForwardNN(self.obs_dim, 1)
         self._init_hyperparameters()
         self.actor_optim = Adam(self.actor.parameters(), lr = self.lr)
+        self.critic_optim = Adam(self.critic.parameters(), lr=self.lr)
 
         #TODO change fill_value
         self.cov_var = torch.full(size=(self.act_dim,), fill_value = 0.5)
@@ -142,7 +144,7 @@ class PPO:
 
         for _ in range(self.n_updates_per_iteration):                                           #ALGO step 6
             #Calculate pi_theta(a_t|s_t) and ratio with pi_theta old
-            _, current_log_probs = self.evaluate(batch_obs, batch_acts)
+            V, current_log_probs = self.evaluate(batch_obs, batch_acts)
             ratios = torch.exp(current_log_probs - batch_log_probs)
 
             #Calculate surrogate losses 
@@ -154,6 +156,15 @@ class PPO:
             self.actor_optim.zero_grad()
             actor_loss.backward()
             self.actor_optim.step()                                                             #ALGO step 6
+
+            critic_loss = nn.MSELoss()(V, batch_rtgs)                                           #ALGO step 7
+            #Calculate gradients and perform backpropagation for critic network
+            self.critic_optim.zero_grad()
+            critic_loss.backward()
+            self.critic_optim.step()                                                            #ALGO step 7
+
+
+        
 
 
 
