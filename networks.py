@@ -3,7 +3,7 @@ from torch import nn
 import torch.nn.functional as F
 import numpy as np
 
-class FeedForwardNN(nn.module):
+class FeedForwardNN(nn.Module):
     def __init__(self, in_dim, out_dim):
         super(FeedForwardNN, self).__init__()
 
@@ -19,7 +19,7 @@ class FeedForwardNN(nn.module):
         
         #TODO Cambiar relu por otra funcion de activacion
         activation1 = F.relu(self.layer1(obs))
-        activation2 = F.relu(self.layer2(obs))
+        activation2 = F.relu(self.layer2(activation1))
         output = self.layer3(activation2)
 
         return output

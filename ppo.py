@@ -41,7 +41,7 @@ class PPO:
             discounted_reward = 0
 
             for rew in reversed(ep_rews):
-                discounted_reward = rew + gamma*discounted_reward
+                discounted_reward = rew + self.gamma*discounted_reward
                 batch_rtgs.insert(0, discounted_reward)
 
         batch_rtgs = torch.tensor(batch_rtgs, dtype=float)
@@ -97,7 +97,7 @@ class PPO:
         return batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens
 
     def evaluate(self, batch_obs, batch_acts):
-        V = self.critic.forward(batch_obs).squeeze()
+        V = self.critic(batch_obs).squeeze()
         mean = self.actor(batch_obs)
         dist = MultivariateNormal(mean, self.cov_mat)
         log_probs = dist.log_prob(batch_acts)
@@ -105,7 +105,7 @@ class PPO:
 
     def get_action(self, obs):
         #Calcula accion tomada por el actor, se llama mean porque es la media de nuestra distribucion (para efectos de exploracion)
-        mean = self.actor.forward(obs)
+        mean = self.actor(obs)
 
         dist = MultivariateNormal(mean, self.cov_mat)
 
@@ -134,10 +134,10 @@ class PPO:
 
             batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens = self.rollout()         #ALGO step 3
 
-            V, _ = self.evaluate(batch_obs)                                                         #ALGO step 5
+            V, _ = self.evaluate(batch_obs, batch_acts)                                             #ALGO step 5
 
             #Calculate A = Q - V_{phi_k}
-            A_k = self.batch_rtgs - V.detach()                                                      #ALGO step 5
+            A_k = batch_rtgs - V.detach()                                                           #ALGO step 5
 
             #Normalize Advantages
             A_k = (A_k - A_k.mean())/(A_k.std() + 1e-10)                                            #Training trick
@@ -154,7 +154,7 @@ class PPO:
 
                 #Calculate gradients and perform backpropagation for actor network
                 self.actor_optim.zero_grad()
-                actor_loss.backward()
+                actor_loss.backward(retain_graph = True)
                 self.actor_optim.step()                                                             #ALGO step 6
 
                 critic_loss = nn.MSELoss()(V, batch_rtgs)                                           #ALGO step 7
@@ -167,11 +167,10 @@ class PPO:
             #Calculate how many timesteps where collected this batch
             timesteps_so_far += np.sum(batch_lens)                                                  #ALGO step 8, end for
 
-
         
 
-
-
-
-    
+import gym
+env = gym.make('Pendulum-v0')
+model = PPO(env)
+model.learn(10000)
             
