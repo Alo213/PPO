@@ -130,38 +130,42 @@ class PPO:
 
     def learn(self, total_timesteps):
         timesteps_so_far = 0
-        while timesteps_so_far < total_timesteps:                                               #ALGO paso 2
+        while timesteps_so_far < total_timesteps:                                                   #ALGO paso 2
 
-        batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens = self.rollout()         #ALGO step 3
+            batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens = self.rollout()         #ALGO step 3
 
-        V, _ = self.evaluate(batch_obs)                                                         #ALGO step 5
+            V, _ = self.evaluate(batch_obs)                                                         #ALGO step 5
 
-        #Calculate A = Q - V_{phi_k}
-        A_k = self.batch_rtgs - V.detach()                                                      #ALGO step 5
+            #Calculate A = Q - V_{phi_k}
+            A_k = self.batch_rtgs - V.detach()                                                      #ALGO step 5
 
-        #Normalize Advantages
-        A_k = (A_k - A_k.mean())/(A_k.std() + 1e-10)                                            #Training trick
+            #Normalize Advantages
+            A_k = (A_k - A_k.mean())/(A_k.std() + 1e-10)                                            #Training trick
 
-        for _ in range(self.n_updates_per_iteration):                                           #ALGO step 6
-            #Calculate pi_theta(a_t|s_t) and ratio with pi_theta old
-            V, current_log_probs = self.evaluate(batch_obs, batch_acts)
-            ratios = torch.exp(current_log_probs - batch_log_probs)
+            for _ in range(self.n_updates_per_iteration):                                           #ALGO step 6
+                #Calculate pi_theta(a_t|s_t) and ratio with pi_theta old
+                V, current_log_probs = self.evaluate(batch_obs, batch_acts)
+                ratios = torch.exp(current_log_probs - batch_log_probs)
 
-            #Calculate surrogate losses 
-            surr1 = ratios*A_k
-            surr2 = torch.clamp(ratios, 1 - self.clip, 1+ self.clip)*A_k
-            actor_loss = (-torch.min(surr1,surr2)).mean()
+                #Calculate surrogate losses 
+                surr1 = ratios*A_k
+                surr2 = torch.clamp(ratios, 1 - self.clip, 1+ self.clip)*A_k
+                actor_loss = (-torch.min(surr1,surr2)).mean()
 
-            #Calculate gradients and perform backpropagation for actor network
-            self.actor_optim.zero_grad()
-            actor_loss.backward()
-            self.actor_optim.step()                                                             #ALGO step 6
+                #Calculate gradients and perform backpropagation for actor network
+                self.actor_optim.zero_grad()
+                actor_loss.backward()
+                self.actor_optim.step()                                                             #ALGO step 6
 
-            critic_loss = nn.MSELoss()(V, batch_rtgs)                                           #ALGO step 7
-            #Calculate gradients and perform backpropagation for critic network
-            self.critic_optim.zero_grad()
-            critic_loss.backward()
-            self.critic_optim.step()                                                            #ALGO step 7
+                critic_loss = nn.MSELoss()(V, batch_rtgs)                                           #ALGO step 7
+                #Calculate gradients and perform backpropagation for critic network
+                self.critic_optim.zero_grad()
+                critic_loss.backward()
+                self.critic_optim.step()                                                            #ALGO step 7
+
+
+            #Calculate how many timesteps where collected this batch
+            timesteps_so_far += np.sum(batch_lens)                                                  #ALGO step 8, end for
 
 
         
