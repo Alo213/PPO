@@ -9,4 +9,5 @@ A continuación se presenta una explicación del código presente en el archivo 
 
 | Linea del codigo y breve descripcion | Metodo de la clase PPO o linea de codigo en que se implementa |
 | ------------------------------------ | ------------------------------------------------------------- |
-| 1. Se inicializan los parámetros del actor y critic | Método constructor, self.actor y self.critic inicializan redes de PyTorch con pesos escogidos de manera aleatoria con una distribucion default de PyTorch |
+| 1. Se inicializan los parámetros del actor y critic | Método constructor, lineas self.actor y self.critic inicializan redes de PyTorch con pesos escogidos de manera aleatoria con una distribucion default de PyTorch |
+| 2. | |
