@@ -11,4 +11,5 @@ A continuación se presenta una explicación del código presente en el archivo 
 | ------------------------------------ | ------------------------------------------------------------- |
 | 1. Se inicializan los parámetros del actor y critic | Método constructor, lineas self.actor y self.critic inicializan redes de PyTorch con pesos escogidos de manera aleatoria con una distribucion default de PyTorch |
 | 2. Se designa un total de timesteps y se empieza a iterar el algoritmo hasta que se rebase el total | En el método learn, while timesteps_so_far < total_timesteps: |
-| 3. Coleccion de batches s<sub>t</sub>, a<sub>t</sub>, &pi;(s<sub>t</sub>\|a<sub>t</sub>) | Método rollout |
+| 3. Coleccion de batches s<sub>t</sub>, a<sub>t</sub>, &pi;<sub>&theta;</sub>(s<sub>t</sub>\|a<sub>t</sub>) | Método rollout |
+| 4. Computo de los retornos estimados | Método compute_rtgs que es subrutina de rollout |
