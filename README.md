@@ -10,4 +10,5 @@ A continuación se presenta una explicación del código presente en el archivo 
 | Linea del codigo y breve descripcion | Metodo de la clase PPO o linea de codigo en que se implementa |
 | ------------------------------------ | ------------------------------------------------------------- |
 | 1. Se inicializan los parámetros del actor y critic | Método constructor, lineas self.actor y self.critic inicializan redes de PyTorch con pesos escogidos de manera aleatoria con una distribucion default de PyTorch |
-| 2. | |
+| 2. Se designa un total de timesteps y se empieza a iterar el algoritmo hasta que se rebase el total | En el método learn, while timesteps_so_far < total_timesteps: |
+| 3. Coleccion de batches $s_t, a_t, \pi(s_t|a_t)$ | Método rollout |
