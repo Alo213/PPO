@@ -12,4 +12,6 @@ A continuación se presenta una explicación del código presente en el archivo 
 | 1. Se inicializan los parámetros del actor y critic | Método constructor, lineas self.actor y self.critic inicializan redes de PyTorch con pesos escogidos de manera aleatoria con una distribucion default de PyTorch |
 | 2. Se designa un total de timesteps y se empieza a iterar el algoritmo hasta que se rebase el total | En el método learn, while timesteps_so_far < total_timesteps: |
 | 3. Coleccion de batches s<sub>t</sub>, a<sub>t</sub>, &pi;<sub>&theta;</sub>(s<sub>t</sub>\|a<sub>t</sub>) | Método rollout |
-| 4. Computo de los retornos estimados | Método compute_rtgs que es subrutina de rollout |
+| 4. Computo de los retornos estimados con discount factor &gamma; | Método compute_rtgs que es subrutina de rollout |
+| 5. Calculo de la Advantage Function (ventaja de realizar una accion particular en un estado dado) A(a<sub>t</sub>, s<sub>t</sub>) = Q(a<sub>t</sub>, s<sub>t</sub>) - V(s<sub>t</sub>) | Método evualuate para estimar V y calculo de A dentro del método learn |
+| 6.          |            |
