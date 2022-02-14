@@ -5,6 +5,8 @@ import torch.nn as nn
 from torch.distributions import MultivariateNormal
 from torch.optim import Adam
 
+import numpy as np
+
 class PPO:
     def __init__(self, env):
         #Informacion del environment
@@ -44,7 +46,7 @@ class PPO:
                 discounted_reward = rew + self.gamma*discounted_reward
                 batch_rtgs.insert(0, discounted_reward)
 
-        batch_rtgs = torch.tensor(batch_rtgs, dtype=float)
+        batch_rtgs = torch.tensor(batch_rtgs, dtype=torch.float32)
 
         return batch_rtgs
 
@@ -167,10 +169,4 @@ class PPO:
             #Calculate how many timesteps where collected this batch
             timesteps_so_far += np.sum(batch_lens)                                                  #ALGO step 8, end for
 
-        
-
-import gym
-env = gym.make('Pendulum-v0')
-model = PPO(env)
-model.learn(10000)
-            
+  
