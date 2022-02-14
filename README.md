@@ -8,4 +8,5 @@ A continuación se presenta una explicación del código presente en el archivo 
 <img src=PPO-Clip-Pseudocode.png align="center"/>
 
 | Linea del codigo y breve descripcion | Metodo de la clase PPO o linea de codigo en que se implementa |
+| ------------------------------------ | ------------------------------------------------------------- |
 | 1. Se inicializan los parámetros del actor y critic | Método constructor, self.actor y self.critic inicializan redes de PyTorch con pesos escogidos por default |
