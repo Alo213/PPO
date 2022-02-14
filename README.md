@@ -3,3 +3,5 @@ Este repositorio es una implementación funcional lo más simple posible del alg
 
 ### Pseudocódigo:
 ![Pseudocodigo](/assets/images/PPO-Clip-Pseudocode.png)
+
+<img src=PPO-Clip-Pseudocode.png/>
