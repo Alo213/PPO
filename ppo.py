@@ -134,7 +134,7 @@ class PPO:
         timesteps_so_far = 0
         while timesteps_so_far < total_timesteps:                                                   #ALGO paso 2
 
-            batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens = self.rollout()         #ALGO step 3
+            batch_obs, batch_acts, batch_log_probs, batch_rtgs, batch_lens = self.rollout()         #ALGO step 3 + 4
 
             V, _ = self.evaluate(batch_obs, batch_acts)                                             #ALGO step 5
 
